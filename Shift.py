@@ -28,3 +28,22 @@ class ShiftWithMask:
         shifted_mask = torch.roll(mask, shifts=[d3//2], dims=[1])
 
         return (shifted_image, shifted_mask)
+
+
+class RepeatImage:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+                "repeats": ("INT", {"default": 3, "min": 1, "max": 5}),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "repeat"
+    CATEGORY = "image"
+
+    def repeat(self, image, repeats):
+        new_image = image.repeat(1,1,repeats,1)
+        return (new_image,)
