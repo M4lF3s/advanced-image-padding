@@ -19,6 +19,10 @@ class ShiftWithMask:
 
     def shift_with_mask(self, image, mask):
         d1, d2, d3, d4 = image.size()
+
+        if d3 % 2 != 0:
+            image = image[:, :, :-1, :]
+
         shifted_image = torch.roll(image, shifts=[d3//2], dims=[2])
         shifted_mask = torch.roll(mask, shifts=[d3//2], dims=[1])
 
