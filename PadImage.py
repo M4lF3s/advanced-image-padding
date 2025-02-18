@@ -12,6 +12,7 @@ class PadImage:
         return {
             "required": {
                 "image": ("IMAGE",),
+                "mask_value": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.01}),
                 "left": ("INT", {"default": 0, "min": 0, "max": MAX_RESOLUTION, "step": 1}),
                 "right": ("INT", {"default": 0, "min": 0, "max": MAX_RESOLUTION, "step": 1}),
                 "interval_size": ("INT", {"default": 50, "min": 0, "max": MAX_RESOLUTION, "step": 1}),
@@ -26,7 +27,7 @@ class PadImage:
     def lerp(self, a, b, x) -> float:
         return (1 - x) * a + x * b
 
-    def expand_image(self, image, left, right, interval_size):
+    def expand_image(self, image, mask_value, left, right, interval_size):
         d1, d2, d3, d4 = image.size()
 
         new_image = torch.ones(
@@ -53,7 +54,7 @@ class PadImage:
                 r1 = r2 if h % interval_size == 0 else r1
                 r2 = random.randint(0, left) if h % interval_size == 0 else r2
                 l1 = floor(self.lerp(r1, r2, (h%interval_size) / interval_size))
-                mask[h, :left+l1] = 1.
+                mask[h, :left+l1] = mask_value
 
         r3 = random.randint(0, right)
         r4 = random.randint(0, right)
@@ -62,6 +63,6 @@ class PadImage:
                 r3 = r4 if h % interval_size == 0 else r3
                 r4 = random.randint(0, right) if h % interval_size == 0 else r4
                 l2 = floor(self.lerp(r3, r4, (h%interval_size) / interval_size))
-                mask[h, -(right+l2):] = 1.
+                mask[h, -(right+l2):] = mask_value
 
         return (new_image, mask)
