@@ -30,6 +30,9 @@ class PadImage:
     def expand_image(self, image, left, right, interval_size, max_mask):
         d1, d2, d3, d4 = image.size()
 
+        left = min(left, d3 // 2)
+        right = min(right, d3 // 2)
+
         new_image = torch.ones(
             (d1, d2, d3 + left + right, d4),
             dtype=torch.float32,
